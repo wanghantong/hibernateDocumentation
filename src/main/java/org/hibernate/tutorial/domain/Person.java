@@ -27,6 +27,7 @@ public class Person {
 	private String lastname;
 
 	private Set<Event> events = new HashSet<Event>();
+	private Set<String> emailAddresses = new HashSet<String>();
 
 	public Long getId() {
 		return id;
@@ -66,5 +67,13 @@ public class Person {
 
 	public void setEvents(Set<Event> events) {
 		this.events = events;
+	}
+
+	public Set<String> getEmailAddresses() {
+		return emailAddresses;
+	}
+
+	public void setEmailAddresses(Set<String> emailAddresses) {
+		this.emailAddresses = emailAddresses;
 	}
 }

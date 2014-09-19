@@ -1,6 +1,6 @@
 /**
 
- * 创建时间：Sep 17, 2014 9:47:02 PM
+ * 创建时间：Sep 19, 2014 5:20:55 PM
 
  * 项目名称：hiberzore
 
@@ -10,84 +10,102 @@
 
  * @since JDK 1.7
 
- * 文件名称：EventManager.java
+ * 文件名称：AssociationTest.java
 
  * 类说明：
 
  */
-package org.hibernate.tutorial;
+package org.hibernate.tutorial.domain;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.hibernate.tutorial.domain.Event;
-import org.hibernate.tutorial.domain.Person;
 import org.hibernate.tutorial.util.HibernateUtil;
+import org.junit.Test;
 
-public class EventManager {
-	public static void main(String[] args) {
-		EventManager mgr = new EventManager();
-		// -------------------1-------------------------
-		// mgr.createAndStoreEvent("My Event", new Date());
-		// -------------------2-------------------------
-		// List<Event> events = mgr.listEvents();
-		// for (int i = 0; i < events.size(); i++) {
-		// Event theEvent = (Event) events.get(i);
-		// System.out.println("Event: " + theEvent.getTitle() + " Time: "
-		// + theEvent.getDate());
-		// }
-		// ---------------------3---------------------------
-		// Long eventId = mgr.createAndStoreEvent("My Event", new Date());
-		// System.out.println(eventId);
-		// Long personId = mgr.createAndStorePerson("Foo", "Bar");
-		// ----------------------3.1-----------------------------
-		// mgr.addEventToPerson(personId, eventId);
-		// System.out.println("Added person " + personId + " to event " +
-		// eventId);
-		// ----------------------3.2--------------------------------
-		// mgr.addEventToPersonInAnUnit(personId, eventId);
-		// System.out.println("Added person " + personId + " to event " +
-		// eventId);
-		// ----------------------4-----------------------------------
-		// Long personId = mgr.createAndStorePerson("Foo", "Bar");
-		// System.out.println(personId);
-		// String emailAddress = "hantogn4510@163.com";
-		// mgr.addEmailToPerson(personId, emailAddress);
-		// ----------------------5------------------------------------
-		// Long eventId = mgr.createAndStoreEvent("My Event3", new Date());
-		// Long personId = mgr.createAndStorePerson("Foo3", "Bar3");
+public class AssociationTest {
+
+	@Test
+	public void createAndStorePerson() {
+		Long eventId = createAndStoreEvent("My Event", new Date());
+		
+	}
+
+	@Test
+	public void createAndStoreEvent() {
+		Long personId = createAndStorePerson("Foo", "Bar");
+	}
+
+	@Test
+	public void addEventToPersonInAnUnit() {
+		Long eventId = createAndStoreEvent("My Event", new Date());
+		Long personId = createAndStorePerson("Foo", "Bar");
+		System.out.println("Added person " + personId + " to event " + eventId);
+		addEventToPersonInAnUnit(personId, eventId);
+	}
+
+	@Test
+	public void addEmailToPerson() {
+		Long personId = createAndStorePerson("Foo", "Bar");
+		String emailAddress = "hantogn4510@163.com";
+		addEmailToPerson(personId, emailAddress);
+	}
+
+	@Test
+	public void addPersonToEventUnidirectional() {
+		Long eventId = createAndStoreEvent("My Event3", new Date());
+		Long personId = createAndStorePerson("Foo3", "Bar3");
 		// ----------------------5.1-----------------------------------
 		// -----测试表明：配置了inverse="true"的一方，不能自动的进行双向维护，理由：关联表无数据
-		// mgr.addPersonToEventUnidirectional(personId, eventId);
-		// ----------------------5.2-----------------------------------
-		// mgr.addEventToPersonUnidirectional(personId, eventId);
-		// ----------------------5.3--------------------------------------
-		// --确实成功了，但是其增加了2次查询：
-		// mgr.addPersonToEventBIdirectional(personId, eventId);
+		addPersonToEventUnidirectional(personId, eventId);
+	}
 
-		// ----------------------5.4--------------------------------------
-		// --确实成功了，但是其也增加了2次查询：
-		// mgr.addEventToPersonBIdirectional(personId, eventId);
-		// ----------------------6.1--------------------------------------
-		// Long selectMaxIdPerson = mgr.selectMaxIdPerson();
-		// mgr.removePerson(personId);
-		// ----------------------6.2--------------------------------------
-		// Long eventId = mgr.selectMaxIdEvent();
-		// System.out.println(eventId);
+	@Test
+	public void addEventToPersonUnidirectional() {
+		Long eventId = createAndStoreEvent("My Event3", new Date());
+		Long personId = createAndStorePerson("Foo3", "Bar3");
+		// ----------------------5.1-----------------------------------
+		// -----测试表明：配置了inverse="true"的一方，不能自动的进行双向维护，理由：关联表无数据
+		addEventToPersonUnidirectional(personId, eventId);
+	}
+
+	@Test
+	public void addPersonToEventBIdirectional() {
+		Long eventId = createAndStoreEvent("My Event3", new Date());
+		Long personId = createAndStorePerson("Foo3", "Bar3");
+		addPersonToEventBIdirectional(personId, eventId);
+	}
+
+	@Test
+	public void addEventToPersonBIdirectional() {
+		Long eventId = createAndStoreEvent("My Event3", new Date());
+		Long personId = createAndStorePerson("Foo3", "Bar3");
+		addEventToPersonBIdirectional(personId, eventId);
+	}
+
+	@Test
+	public void removePerson() {
+		Long personId = selectMaxIdPerson();
+		removePerson(personId);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void removeEvent() {
+		Long eventId = selectMaxIdEvent();
+		System.out.println(eventId);
 		// 配置inverse="true"，此时次方既不能级联保存，也不允许级联删除，而且在关联表中存在相关引用时，此方是不允许直接被删除的
 		// 如果关联表中存在关联，那么将抛出外键约束异常，如果不存在关联，则只删除当前Event
-		// mgr.removeEvent(eventId);
-		// -----------------------7---------------------------------------
-		// -存储测试数据
-		Long eventId = mgr.createAndStoreEvent("My Event3", new Date());
-		Long personId = mgr.createAndStorePerson("Foo3", "Bar3");
-		mgr.addEventToPersonUnidirectional(personId, eventId);
-		// --
-		mgr.removeEventButPerson(personId, eventId);
-		HibernateUtil.getSessionFactory().close();
+		removeEvent(eventId);
+	}
 
+	@Test
+	public void removeEventButPerson() {
+		Long eventId = createAndStoreEvent("My Event3", new Date());
+		Long personId = createAndStorePerson("Foo3", "Bar3");
+		addEventToPersonUnidirectional(personId, eventId);
+		removeEventButPerson(personId, eventId);
 	}
 
 	private Long createAndStorePerson(String Firstname, String Lastname) {
@@ -238,11 +256,12 @@ public class EventManager {
 
 	private void removePersonFromEvent(Long personId, Long eventId) {
 		// 如果关联表中存在关联，那么将抛出外键约束异常，如果不存在关联，则只删除当前Event
-//		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-//		session.beginTransaction();
-//		Person aPerson = (Person) session.load(Person.class, personId);
-//		session.delete(aPerson);
-//		session.getTransaction().commit();
+		// Session session =
+		// HibernateUtil.getSessionFactory().getCurrentSession();
+		// session.beginTransaction();
+		// Person aPerson = (Person) session.load(Person.class, personId);
+		// session.delete(aPerson);
+		// session.getTransaction().commit();
 	}
 
 	private void removeEvent(Long eventId) {
