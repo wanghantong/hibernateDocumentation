@@ -25,17 +25,18 @@ import org.hibernate.Session;
 import org.hibernate.tutorial.util.HibernateUtil;
 import org.junit.Test;
 
-public class AssociationTest {
+public class BiDirectionalTest {
 
 	@Test
 	public void createAndStorePerson() {
 		Long eventId = createAndStoreEvent("My Event", new Date());
-		
+		System.out.println(eventId);
 	}
 
 	@Test
 	public void createAndStoreEvent() {
 		Long personId = createAndStorePerson("Foo", "Bar");
+		System.err.println(personId);
 	}
 
 	@Test
@@ -237,10 +238,12 @@ public class AssociationTest {
 
 		Person aPerson = (Person) session.load(Person.class, personId);
 		Event anEvent = (Event) session.load(Event.class, eventId);
-		// ---起到双向保存作用的，
-		aPerson.getEvents().add(anEvent);
-		// ---多了2个查询，以为inverse="true"所以该行代码不能起到双向保存作用
-		anEvent.getParticipants().add(aPerson);
+		
+		aPerson.addToEvent(anEvent);//---源自document，在domain中加了双向维护的方法，其实并不好
+//		// ---起到双向保存作用的，
+//		aPerson.getEvents().add(anEvent);
+//		// ---多了2个查询，以为inverse="true"所以该行代码不能起到双向保存作用
+//		anEvent.getParticipants().add(aPerson);
 		session.getTransaction().commit();
 
 	}

@@ -4,11 +4,12 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.hibernate.tutorial.domain">
-	<class name="Event" table="EVENTS">
-		<id name="id" column="EVENT_ID">
+	<class name="Customer" table="CUSTOMER">
+		<id name="id" column="CUSTOMER_ID">
 			<generator class="native" />
 		</id>
-		<property name="date" type="timestamp" column="EVENT_DATE" />
-		<property name="title" />
+		<property name="name" />
+		<property name="city" />
+
 	</class>
 </hibernate-mapping>

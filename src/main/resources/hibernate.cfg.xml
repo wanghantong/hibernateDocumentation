@@ -33,6 +33,8 @@
 
 		<mapping resource="Event.hbm.xml" />
 		<mapping resource="Person.hbm.xml" />
+		<mapping resource="Customer.hbm.xml" />
+		<mapping resource="Saler.hbm.xml" />
 
 	</session-factory>
 

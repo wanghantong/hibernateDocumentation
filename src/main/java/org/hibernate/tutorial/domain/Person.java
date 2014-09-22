@@ -76,4 +76,14 @@ public class Person {
 	public void setEmailAddresses(Set<String> emailAddresses) {
 		this.emailAddresses = emailAddresses;
 	}
+
+	public void addToEvent(Event event) {
+		this.getEvents().add(event);
+		event.getParticipants().add(this);
+	}
+
+	public void removeFromEvent(Event event) {
+		this.getEvents().remove(event);
+		event.getParticipants().remove(this);
+	}
 }
